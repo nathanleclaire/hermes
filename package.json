@@ -1,0 +1,21 @@
+{
+  "name": "hermes",
+  "version": "0.0.0",
+  "description": "A tool to manage mailing list for a web application / blog.",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/nathanleclaire/hermes"
+  },
+  "author": "Nathan LeClaire",
+  "license": "MIT",
+  "dependencies": {
+    "async": "~0.2.10",
+    "express": "~3.4.8",
+    "rethinkdb": "~1.11.0-4",
+    "assert": "~1.1.0"
+  }
+}
