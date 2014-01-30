@@ -2,6 +2,8 @@ var express = require('express');
 var r = require('rethinkdb');
 var assert = require('assert');
 
+var Mailgun = require('mailgun').Mailgun;
+
 var app = express();
 
 r.connect({db: 'hermes'}, function(err, conn) {
@@ -28,6 +30,19 @@ r.connect({db: 'hermes'}, function(err, conn) {
 app.use(express.urlencoded());
 app.use(express.json());
 
+function sendMail(subject, to, text) {
+	mailgun.sendText('zenlikethat@gmail.com', ['Nathan LeClaire <nathan.leclaire@gmail.com>'], 
+		'Testing Mailgun Thing',
+		'Please confirm you want to subscribe to mailing list',
+		'noreply@nathanleclaire.com', 
+		{},
+		function(err) {
+			if (err) console.log("there was an email error", err);
+			else console.log("successfully sent email to nathanleclaire.com");
+		}
+	);
+}
+
 function main(conn) {
 	var subscribers = r.db('hermes').table('subscriber');
 	app.post('/email_signup', function(req, res) {
@@ -41,6 +56,9 @@ function main(conn) {
 					success: false
 				});
 			} else {
+				sendMail("Hi!  I hear you'd like to subscribe to my blog.",
+						 "nathan.leclaire@gmail.com",
+						 "Please confirm that you want to subscribe to the mailing list at this url : .");
 				res.json({
 					success: true
 				});
