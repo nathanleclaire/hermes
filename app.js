@@ -48,7 +48,8 @@ function main(conn) {
 	app.post('/email_signup', function(req, res) {
 		var email = req.body.email;
 		subscribers.insert({
-			email: email
+			email: email,
+			subscriptionConfirmed: false
 		}).run(conn, function(err, result) {
 			if (err) {
 				console.log("[ERROR] failed to insert email from someone... ", err);
