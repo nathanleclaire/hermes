@@ -1,6 +1,7 @@
 var express = require("express");
 var r = require("rethinkdb");
 var assert = require("assert");
+var jade = require("jade");
 
 var Mailgun = require("mailgun").Mailgun;
 
@@ -30,15 +31,32 @@ r.connect({db: "hermes"}, function(err, conn) {
 app.use(express.urlencoded());
 app.use(express.json());
 
-function sendSingleMail(subject, to, text) {
-	mailgun.sendText("Nathan LeClaire <nathan.leclaire@gmail.com>", [to.email], 
-		subject,
-		text,
-		function(err) {
-			if (err) console.log("there was an email error", err);
-			else console.log("successfully sent email to " + to.email);
+function sendSingleMail(subject, to) {
+	getSignupEmailTemplate({
+		to: to
+	}, function(html) {
+		mailgun.sendRaw("Nathan LeClaire <nathan.leclaire@gmail.com>", [to.email], 
+        	'From: nathan.leclaire@gmail.com' +
+			'\nTo: ' + to.email +
+            '\nContent-Type: text/html; charset=utf-8' +
+            '\nSubject: ' + subject + '\n\n' +
+			html,
+			function(err) {
+				if (err) console.log("there was an email error", err);
+				else console.log("successfully sent email to " + to.email);
+			}
+		);
+	});
+}
+
+function getSignupEmailTemplate(context, callback) {
+	var tmpl = jade.renderFile("views/signup-email.jade", context, function(err, html) {
+		if (err) {
+			console.log("error rendering jade template");	
+		} else {
+			callback(html);
 		}
-	);
+	});
 }
 
 function main(conn) {
@@ -59,8 +77,7 @@ function main(conn) {
 				sendSingleMail("Hi!  I hear you'd like to subscribe to my blog.",
 							{
 								email: email
-							},
-						 "Please confirm that you want to subscribe to the mailing list at this url : .");
+							});
 				res.json({
 					success: true
 				});
