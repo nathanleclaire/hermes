@@ -17,6 +17,7 @@
     "express": "~3.4.8",
     "rethinkdb": "~1.11.0-4",
     "assert": "~1.1.0",
-    "mailgun": "~0.4.2"
+    "mailgun": "~0.4.2",
+    "jade": "~1.1.5"
   }
 }
